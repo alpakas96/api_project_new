@@ -4,6 +4,13 @@ import axios from "axios";
 import { Configuration, OpenAIApi } from "openai";
 import path from 'path'
 import * as url from 'url';
+
+//these next two lines give us a package that should let us use .env variables
+import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config()
+
+const apiKey = process.env.MY_API_KEY;
+
 // const _filename = url.fileURLToPath(import.meta.url); 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
@@ -25,7 +32,7 @@ app.get("/", (req, res) => {
 
 app.get("/data/:user_input", async (req, res) => {
   const configuration = new Configuration({
-    apiKey: "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",
+    apiKey,
   });
 
   const openai = new OpenAIApi(configuration);
