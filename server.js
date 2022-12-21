@@ -1,3 +1,6 @@
+import connection from './connections.js'
+import mongoose from 'mongoose';
+import fetch from 'node-fetch';
 import express from "express";
 import cors from "cors";
 import axios from "axios";
@@ -5,10 +8,11 @@ import { Configuration, OpenAIApi } from "openai";
 import path from 'path'
 import * as url from 'url';
 
-//these next two lines give us a package that should let us use .env variables
-import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+//these next two lines give us a package that lets us use .env variables
+import * as dotenv from 'dotenv'
 dotenv.config()
 
+//this brings in the api key stored in the .env file
 const apiKey = process.env.MY_API_KEY;
 
 // const _filename = url.fileURLToPath(import.meta.url); 
