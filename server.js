@@ -2,9 +2,15 @@ import express from "express";
 import cors from "cors";
 import axios from "axios";
 import { Configuration, OpenAIApi } from "openai";
+import path from 'path'
+import * as url from 'url';
+// const _filename = url.fileURLToPath(import.meta.url); 
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 const app = express();
 
+//this line makes all files at __dirname accessable to the server 
+app.use(express.static(__dirname))
 app.use(express.json());
 app.use(cors());
 
@@ -13,12 +19,13 @@ app.listen(3000, () => {
 });
 
 app.get("/", (req, res) => {
-  res.json({ hello: "World" });
+  // res.json({ hello: "World" });
+  res.sendFile(path.join(__dirname,'/index.html'));
 });
 
 app.get("/data/:user_input", async (req, res) => {
   const configuration = new Configuration({
-    apiKey: "insert api key",
+    apiKey: "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",
   });
 
   const openai = new OpenAIApi(configuration);
