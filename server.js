@@ -5,10 +5,48 @@ import express from "express";
 import cors from "cors";
 import axios from "axios";
 import { Configuration, OpenAIApi } from "openai";
-import path from 'path'
+import path from 'path';
 import * as url from 'url';
 
+//these allow us to make simple HTTP requests to our own server
+import request from 'request'; 
+import { MongoClient } from 'mongodb';
+
+const dbURL = 'mongodb://localhost:27017';
+const dbName = 'myDatabase'; 
+
+function downloadImage(url){
+  MongoClient.connect(dbURL, {useUnifiedTopology: true}, function(err, client) {
+    console.log("MongoClient connected to the server"); 
+
+    const db = client.db(dbName); 
+
+    //downloading the image from the URL variable: 
+    request.get({url: url, encoding: 'binary'}, function(err, response, body) {
+      if(err) {
+        console.log(err); 
+        return; 
+      }
+
+      //creating a new mongodb document with the image data 
+      const newImage = { 
+        data: new Buffer.from(body, 'binary'), 
+        contentType: 'image/jpeg'
+      };
+
+      //inserting the new image into the images collection 
+      db.collection('images').insertOne(newImage, function(err, result) {
+        console.log('Image saved to the database'); 
+        // client.close(); 
+      });
+
+      console.log(db.collection('images'))
+    });
+  });
+}
+
 //these next two lines give us a package that lets us use .env variables
+
 import * as dotenv from 'dotenv'
 dotenv.config()
 
@@ -52,8 +90,7 @@ app.get("/data/:user_input", async (req, res) => {
 
   let url = prompt.data.data[0].url;
 
-  // let response = await axios.get(prompt);
-  // console.log(response);
+  downloadImage(prompt.data.data[0].url);
 
   res.json({ url });
 });
