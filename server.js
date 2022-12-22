@@ -92,5 +92,18 @@ app.get("/data/:user_input", async (req, res) => {
 
   downloadImage(prompt.data.data[0].url);
 
+  // Get the documents collection
+  const collection = connection.collection('images');
+
+  //manually incrementing through .forEach
+  let i = 0; 
+  // collection.find returns an array
+  collection.find({}).forEach (() => {
+    let newSrc = collection[i]._id.data.binary.base64; 
+    //append child img tag to html with newSrc prop value
+    i++;
+  });
+
   res.json({ url });
+
 });
